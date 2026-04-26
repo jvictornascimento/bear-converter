@@ -44,7 +44,7 @@ class UserControllerIntegrationTest {
 					{
 					  "name": "  Joao   Nascimento  ",
 					  "email": "  JOAO@EMAIL.COM  ",
-					  "password": "safePassword123"
+					  "password": "SafePass1!"
 					}
 					"""))
 			.andExpect(status().isCreated())
@@ -59,7 +59,7 @@ class UserControllerIntegrationTest {
 
 		User savedUser = userRepository.findByEmail("joao@email.com").orElseThrow();
 		org.assertj.core.api.Assertions.assertThat(savedUser.getPasswordHash())
-			.isNotEqualTo("safePassword123")
+			.isNotEqualTo("SafePass1!")
 			.isNotBlank();
 	}
 
@@ -73,7 +73,7 @@ class UserControllerIntegrationTest {
 					{
 					  "name": "Joao Nascimento",
 					  "email": "joao@email.com",
-					  "password": "safePassword123"
+					  "password": "SafePass1!"
 					}
 					"""))
 			.andExpect(status().isConflict())
@@ -88,7 +88,22 @@ class UserControllerIntegrationTest {
 					{
 					  "name": "<script>alert('x')</script>",
 					  "email": "user@email.com",
-					  "password": "safePassword123"
+					  "password": "SafePass1!"
+					}
+					"""))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Invalid request data"));
+	}
+
+	@Test
+	void shouldRejectWeakPassword() throws Exception {
+		mockMvc.perform(post("/api/v1/users")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+					{
+					  "name": "Weak Password",
+					  "email": "weak@email.com",
+					  "password": "password"
 					}
 					"""))
 			.andExpect(status().isBadRequest())

@@ -32,7 +32,7 @@ class UserServiceTest {
 
 	@Test
 	void shouldCreateLocalUserWithNormalizedEmail() {
-		CreateUserRequest request = new CreateUserRequest("  Maria   Silva  ", "  MARIA@EMAIL.COM ", "safePassword123");
+		CreateUserRequest request = new CreateUserRequest("  Maria   Silva  ", "  MARIA@EMAIL.COM ", "SafePass1!");
 
 		var response = userService.create(request);
 
@@ -41,28 +41,28 @@ class UserServiceTest {
 		assertThat(response.role()).isEqualTo(UserRole.USER);
 		assertThat(response.provider()).isEqualTo(AuthProvider.LOCAL);
 		assertThat(response.active()).isTrue();
-		assertThat(userRepository.users.getFirst().getPasswordHash()).isNotEqualTo("safePassword123");
+		assertThat(userRepository.users.getFirst().getPasswordHash()).isNotEqualTo("SafePass1!");
 	}
 
 	@Test
 	void shouldRejectDuplicateEmail() {
-		userService.create(new CreateUserRequest("Maria Silva", "maria@email.com", "safePassword123"));
+		userService.create(new CreateUserRequest("Maria Silva", "maria@email.com", "SafePass1!"));
 
-		assertThatThrownBy(() -> userService.create(new CreateUserRequest("Other User", "MARIA@EMAIL.COM", "safePassword123")))
+		assertThatThrownBy(() -> userService.create(new CreateUserRequest("Other User", "MARIA@EMAIL.COM", "SafePass1!")))
 			.isInstanceOf(DuplicateUserEmailException.class)
 			.hasMessage("Email already in use");
 	}
 
 	@Test
 	void shouldRejectUnsafeName() {
-		assertThatThrownBy(() -> userService.create(new CreateUserRequest("<script>alert(1)</script>", "safe@email.com", "safePassword123")))
+		assertThatThrownBy(() -> userService.create(new CreateUserRequest("<script>alert(1)</script>", "safe@email.com", "SafePass1!")))
 			.isInstanceOf(UnsafeTextException.class)
 			.hasMessage("Unsafe text value");
 	}
 
 	@Test
 	void shouldUpdateUser() {
-		var created = userService.create(new CreateUserRequest("Maria Silva", "maria@email.com", "safePassword123"));
+		var created = userService.create(new CreateUserRequest("Maria Silva", "maria@email.com", "SafePass1!"));
 		AdminUpdateUserRequest request = new AdminUpdateUserRequest("Maria Admin", "admin@email.com", UserRole.ADMIN, true);
 
 		var response = userService.update(created.id(), request);
@@ -74,7 +74,7 @@ class UserServiceTest {
 
 	@Test
 	void shouldSoftDeleteAndRestoreUser() {
-		var created = userService.create(new CreateUserRequest("Maria Silva", "maria@email.com", "safePassword123"));
+		var created = userService.create(new CreateUserRequest("Maria Silva", "maria@email.com", "SafePass1!"));
 
 		userService.delete(created.id());
 		User deletedUser = userRepository.findById(created.id()).orElseThrow();

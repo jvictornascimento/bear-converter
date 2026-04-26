@@ -1,5 +1,6 @@
 package br.com.bearflow.bear_converter.users.api.dto;
 
+import br.com.bearflow.bear_converter.users.api.validation.StrongPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,7 +16,7 @@ public record CreateUserRequest(
 	String email,
 
 	@NotBlank
-	@Size(min = 8, max = 120)
+	@StrongPassword
 	String password
 ) {
 
