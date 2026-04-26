@@ -1,5 +1,12 @@
 spring:
   application:
     name: bear-converter
+  datasource:
+    url: jdbc:postgresql://${DATABASEHOST:localhost}:${DATABASEPORT:5432}/${DATABASENAME}
+    username: ${DATABASEUSERNAME}
+    password: ${DATABASEPASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: update
