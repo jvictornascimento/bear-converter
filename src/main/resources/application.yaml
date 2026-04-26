@@ -1,3 +1,5 @@
 spring:
   application:
     name: bear-converter
+  jpa:
+    open-in-view: false
