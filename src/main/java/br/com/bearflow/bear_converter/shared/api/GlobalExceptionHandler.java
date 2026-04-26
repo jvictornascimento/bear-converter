@@ -1,0 +1,45 @@
+package br.com.bearflow.bear_converter.shared.api;
+
+import br.com.bearflow.bear_converter.users.application.DuplicateUserEmailException;
+import br.com.bearflow.bear_converter.users.application.UnsafeTextException;
+import br.com.bearflow.bear_converter.users.application.UserNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException exception) {
+		List<String> errors = exception.getBindingResult()
+			.getFieldErrors()
+			.stream()
+			.map(error -> error.getField() + ": " + error.getDefaultMessage())
+			.toList();
+		return ResponseEntity.badRequest()
+			.body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "Invalid request data", errors));
+	}
+
+	@ExceptionHandler(UnsafeTextException.class)
+	public ResponseEntity<ErrorResponse> handleUnsafeText(UnsafeTextException exception) {
+		return ResponseEntity.badRequest()
+			.body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "Invalid request data", List.of(exception.getMessage())));
+	}
+
+	@ExceptionHandler(DuplicateUserEmailException.class)
+	public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateUserEmailException exception) {
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+			.body(ErrorResponse.of(HttpStatus.CONFLICT.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException exception) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			.body(ErrorResponse.of(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
+	}
+}
