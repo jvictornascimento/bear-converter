@@ -1,6 +1,7 @@
 package br.com.bearflow.bear_converter.conversions.application;
 
 import br.com.bearflow.bear_converter.conversions.domain.PdfDocumentType;
+import br.com.bearflow.bear_converter.conversions.domain.PdfComplexityLevel;
 import br.com.bearflow.bear_converter.conversions.support.PdfTestFiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
@@ -20,6 +21,7 @@ class PdfUploadServiceTest {
 
 		assertThat(response.fileName()).isEqualTo("electrical.pdf");
 		assertThat(response.documentType()).isEqualTo(PdfDocumentType.VECTOR);
+		assertThat(response.complexityLevel()).isEqualTo(PdfComplexityLevel.SIMPLE);
 		assertThat(response.message()).isEqualTo("PDF accepted for conversion");
 	}
 
@@ -57,5 +59,14 @@ class PdfUploadServiceTest {
 		assertThatThrownBy(() -> pdfUploadService.upload(file))
 			.isInstanceOf(InvalidPdfUploadException.class)
 			.hasMessage("Invalid PDF file");
+	}
+
+	@Test
+	void shouldRejectVectorPdfThatNeedsPremiumFeatures() throws Exception {
+		var file = new MockMultipartFile("file", "multi-page.pdf", "application/pdf", PdfTestFiles.multiPageVectorPdf());
+
+		assertThatThrownBy(() -> pdfUploadService.upload(file))
+			.isInstanceOf(PdfComplexityNotSupportedException.class)
+			.hasMessage("PDF complexity is not available for the free plan yet");
 	}
 }

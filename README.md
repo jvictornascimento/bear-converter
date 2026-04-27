@@ -212,7 +212,24 @@ Conversoes:
 
 - `POST /api/v1/conversions/pdf` recebe um PDF via multipart `file`;
 - PDFs vetoriais sao aceitos para o fluxo de conversao;
-- PDFs baseados em imagem retornam mensagem informando que esse modelo ainda nao esta disponivel.
+- PDFs baseados em imagem retornam mensagem informando que esse modelo ainda nao esta disponivel;
+- PDFs vetoriais sao classificados como `SIMPLE`, `MEDIUM`, `COMPLEX` ou `PROFESSIONAL`;
+- no momento, o plano FREE aceita apenas complexidade `SIMPLE` e `MEDIUM`;
+- PDFs que exigem recursos premium retornam mensagem informando que essa complexidade ainda nao esta disponivel no plano FREE.
+
+Modelo intermediario CAD:
+
+O backend ja possui a base do modelo intermediario que sera usado antes da escrita DXF proprietaria:
+
+- `cadmodel/drawing`;
+- `cadmodel/entity`;
+- `cadmodel/geometry`;
+- `cadmodel/layer`;
+- `cadmodel/style`;
+- `cadmodel/dimension`;
+- `cadmodel/hatch`;
+- `cadmodel/block`;
+- `cadmodel/report`.
 
 ## Status
 

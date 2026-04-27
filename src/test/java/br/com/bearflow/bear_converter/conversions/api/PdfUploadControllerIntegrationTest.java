@@ -36,6 +36,7 @@ class PdfUploadControllerIntegrationTest {
 			.andExpect(status().isAccepted())
 			.andExpect(jsonPath("$.fileName").value("electrical.pdf"))
 			.andExpect(jsonPath("$.documentType").value("VECTOR"))
+			.andExpect(jsonPath("$.complexityLevel").value("SIMPLE"))
 			.andExpect(jsonPath("$.message").value("PDF accepted for conversion"));
 	}
 
@@ -65,5 +66,20 @@ class PdfUploadControllerIntegrationTest {
 
 		mockMvc.perform(multipart("/api/v1/conversions/pdf").file(file))
 			.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser
+	void shouldRejectPdfThatExceedsFreePlan() throws Exception {
+		MockMultipartFile file = new MockMultipartFile(
+			"file",
+			"multi-page.pdf",
+			"application/pdf",
+			PdfTestFiles.multiPageVectorPdf()
+		);
+
+		mockMvc.perform(multipart("/api/v1/conversions/pdf").file(file))
+			.andExpect(status().isUnprocessableContent())
+			.andExpect(jsonPath("$.message").value("PDF complexity is not available for the free plan yet"));
 	}
 }

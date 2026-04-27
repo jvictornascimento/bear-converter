@@ -1,7 +1,9 @@
 package br.com.bearflow.bear_converter.conversions.application;
 
 import br.com.bearflow.bear_converter.conversions.api.dto.PdfUploadResponse;
+import br.com.bearflow.bear_converter.conversions.domain.PdfComplexityLevel;
 import br.com.bearflow.bear_converter.conversions.domain.PdfDocumentType;
+import br.com.bearflow.bear_converter.conversions.domain.PdfInspectionResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +15,7 @@ public class PdfUploadService {
 
 	private static final String PDF_ACCEPTED_MESSAGE = "PDF accepted for conversion";
 	private static final String IMAGE_PDF_NOT_SUPPORTED_MESSAGE = "PDF image model is not available yet";
+	private static final String PDF_COMPLEXITY_NOT_SUPPORTED_MESSAGE = "PDF complexity is not available for the free plan yet";
 
 	private final PdfInspectionService pdfInspectionService;
 
@@ -23,14 +26,26 @@ public class PdfUploadService {
 	public PdfUploadResponse upload(MultipartFile file) {
 		validateFile(file);
 		try {
-			PdfDocumentType documentType = pdfInspectionService.inspect(file.getBytes());
-			if (documentType == PdfDocumentType.IMAGE) {
+			PdfInspectionResult inspectionResult = pdfInspectionService.inspect(file.getBytes());
+			if (inspectionResult.documentType() == PdfDocumentType.IMAGE) {
 				throw new ImagePdfNotSupportedException(IMAGE_PDF_NOT_SUPPORTED_MESSAGE);
 			}
-			return new PdfUploadResponse(file.getOriginalFilename(), documentType, PDF_ACCEPTED_MESSAGE);
+			if (!isAvailableForFreePlan(inspectionResult.complexityLevel())) {
+				throw new PdfComplexityNotSupportedException(PDF_COMPLEXITY_NOT_SUPPORTED_MESSAGE);
+			}
+			return new PdfUploadResponse(
+				file.getOriginalFilename(),
+				inspectionResult.documentType(),
+				inspectionResult.complexityLevel(),
+				PDF_ACCEPTED_MESSAGE
+			);
 		} catch (IOException exception) {
 			throw new InvalidPdfUploadException("Invalid PDF file");
 		}
+	}
+
+	private boolean isAvailableForFreePlan(PdfComplexityLevel complexityLevel) {
+		return complexityLevel == PdfComplexityLevel.SIMPLE || complexityLevel == PdfComplexityLevel.MEDIUM;
 	}
 
 	private void validateFile(MultipartFile file) {

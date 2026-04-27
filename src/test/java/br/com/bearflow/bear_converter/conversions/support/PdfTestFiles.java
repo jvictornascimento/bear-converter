@@ -54,6 +54,21 @@ public final class PdfTestFiles {
 		}
 	}
 
+	public static byte[] multiPageVectorPdf() throws IOException {
+		try (PDDocument document = new PDDocument()) {
+			for (int index = 0; index < 2; index++) {
+				PDPage page = new PDPage(PDRectangle.A4);
+				document.addPage(page);
+				try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+					contentStream.moveTo(80, 120);
+					contentStream.lineTo(260, 120);
+					contentStream.stroke();
+				}
+			}
+			return save(document);
+		}
+	}
+
 	private static byte[] save(PDDocument document) throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		document.save(outputStream);
