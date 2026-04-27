@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -111,6 +112,7 @@ class UserControllerIntegrationTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void shouldListUsersByActiveStatus() throws Exception {
 		User activeUser = UserFactory.createLocalUser("Active User", "active@email.com", "hash");
 		User inactiveUser = UserFactory.createLocalUser("Inactive User", "inactive@email.com", "hash");
@@ -125,6 +127,7 @@ class UserControllerIntegrationTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void shouldGetUserDetails() throws Exception {
 		User user = userRepository.save(UserFactory.createLocalUser("Joao Nascimento", "joao@email.com", "hash"));
 
@@ -136,6 +139,7 @@ class UserControllerIntegrationTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void shouldUpdateUserAsAdmin() throws Exception {
 		User user = userRepository.save(UserFactory.createLocalUser("Old Name", "old@email.com", "hash"));
 
@@ -157,6 +161,7 @@ class UserControllerIntegrationTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void shouldSoftDeleteUser() throws Exception {
 		User user = userRepository.save(UserFactory.createLocalUser("Joao Nascimento", "joao@email.com", "hash"));
 
@@ -169,6 +174,7 @@ class UserControllerIntegrationTest {
 	}
 
 	@Test
+	@WithMockUser(roles = "ADMIN")
 	void shouldRestoreUser() throws Exception {
 		User user = UserFactory.createLocalUser("Joao Nascimento", "joao@email.com", "hash");
 		user.deactivate();

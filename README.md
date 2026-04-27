@@ -23,7 +23,9 @@ https://www.bear-converter.bearflow.com.br
 Funcionalidades planejadas para a V1:
 
 - cadastro de usuarios;
-- login com autenticacao via JWT;
+- login com autenticacao via JWT RS256;
+- refresh token persistido;
+- logout com revogacao de refresh token;
 - controle de acesso com Spring Security;
 - upload de arquivos PDF;
 - criacao de jobs de conversao;
@@ -165,6 +167,18 @@ export DATABASEHOST="localhost"
 export DATABASEPORT="5432"
 ```
 
+Variaveis opcionais para autenticacao:
+
+```bash
+export JWT_ACCESS_TOKEN_MINUTES="15"
+export JWT_REFRESH_TOKEN_DAYS="7"
+export JWT_REFRESH_TOKEN_CLEANUP_DELAY_MS="3600000"
+export JWT_PRIVATE_KEY="sua_chave_privada_rsa_em_pem"
+export JWT_PUBLIC_KEY="sua_chave_publica_rsa_em_pem"
+```
+
+Se as chaves RSA nao forem informadas, a aplicacao gera um par local ao iniciar. Isso ajuda no desenvolvimento, mas em producao as chaves devem ser fixas por variavel de ambiente.
+
 Executar a aplicacao:
 
 ```bash
@@ -177,8 +191,24 @@ Executar os testes:
 ./mvnw test
 ```
 
+## Endpoints atuais
+
+Usuarios:
+
+- `POST /api/v1/users` cria um usuario;
+- `GET /api/v1/admin/users` lista usuarios ativos e inativos para administradores;
+- `GET /api/v1/users/{id}` detalha um usuario;
+- `PUT /api/v1/users/{id}` altera dados do usuario;
+- `DELETE /api/v1/users/{id}` desativa o usuario.
+
+Autenticacao:
+
+- `POST /api/v1/auth/login` autentica com email e senha;
+- `POST /api/v1/auth/refresh` troca um refresh token valido por novos tokens;
+- `POST /api/v1/auth/logout` revoga o refresh token informado.
+
 ## Status
 
 Projeto em fase inicial de desenvolvimento.
 
-No momento, a estrutura base do Spring Boot esta criada e as dependencias principais da V1 ja estao configuradas.
+No momento, o cadastro de usuarios, a autenticacao JWT com RS256, o refresh token e o logout ja estao implementados no backend.
