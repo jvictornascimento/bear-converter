@@ -2,6 +2,9 @@ package br.com.bearflow.bear_converter.shared.api;
 
 import br.com.bearflow.bear_converter.auth.application.InvalidCredentialsException;
 import br.com.bearflow.bear_converter.auth.application.InvalidRefreshTokenException;
+import br.com.bearflow.bear_converter.conversions.application.ImagePdfNotSupportedException;
+import br.com.bearflow.bear_converter.conversions.application.InvalidPdfUploadException;
+import br.com.bearflow.bear_converter.conversions.application.PdfComplexityNotSupportedException;
 import br.com.bearflow.bear_converter.users.application.DuplicateUserEmailException;
 import br.com.bearflow.bear_converter.users.application.UnsafeTextException;
 import br.com.bearflow.bear_converter.users.application.UserNotFoundException;
@@ -55,5 +58,23 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(InvalidRefreshTokenException exception) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 			.body(ErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidPdfUploadException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidPdfUpload(InvalidPdfUploadException exception) {
+		return ResponseEntity.badRequest()
+			.body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(ImagePdfNotSupportedException.class)
+	public ResponseEntity<ErrorResponse> handleImagePdfNotSupported(ImagePdfNotSupportedException exception) {
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
+			.body(ErrorResponse.of(HttpStatus.UNPROCESSABLE_CONTENT.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(PdfComplexityNotSupportedException.class)
+	public ResponseEntity<ErrorResponse> handlePdfComplexityNotSupported(PdfComplexityNotSupportedException exception) {
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
+			.body(ErrorResponse.of(HttpStatus.UNPROCESSABLE_CONTENT.value(), exception.getMessage()));
 	}
 }
