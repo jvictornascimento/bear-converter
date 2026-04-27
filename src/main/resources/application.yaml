@@ -10,3 +10,11 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+
+security:
+  jwt:
+    access-token-minutes: ${JWT_ACCESS_TOKEN_MINUTES:15}
+    refresh-token-days: ${JWT_REFRESH_TOKEN_DAYS:7}
+    refresh-token-cleanup-delay-ms: ${JWT_REFRESH_TOKEN_CLEANUP_DELAY_MS:3600000}
+    private-key: ${JWT_PRIVATE_KEY:}
+    public-key: ${JWT_PUBLIC_KEY:}

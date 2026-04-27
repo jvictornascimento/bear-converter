@@ -123,3 +123,18 @@ Motivo:
 - mantem o usuario no controle das decisoes;
 - reduz retrabalho;
 - reforca o ciclo curto de pair programming.
+
+## 2026-04-26 - Autenticacao com JWT RS256 e refresh token persistido
+
+Decisao:
+
+> O login da V1 deve usar access token JWT assinado com RS256 e refresh token persistido no banco.
+
+Motivo:
+
+- RS256 separa chave privada e publica;
+- access token curto reduz impacto em caso de vazamento;
+- refresh token persistido permite logout real;
+- refresh token pode ser rotacionado a cada uso;
+- tokens expirados podem ser revogados por rotina agendada;
+- prepara a base para login com Google no futuro.

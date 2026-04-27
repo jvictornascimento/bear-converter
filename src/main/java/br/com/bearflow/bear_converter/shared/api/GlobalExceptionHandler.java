@@ -1,5 +1,7 @@
 package br.com.bearflow.bear_converter.shared.api;
 
+import br.com.bearflow.bear_converter.auth.application.InvalidCredentialsException;
+import br.com.bearflow.bear_converter.auth.application.InvalidRefreshTokenException;
 import br.com.bearflow.bear_converter.users.application.DuplicateUserEmailException;
 import br.com.bearflow.bear_converter.users.application.UnsafeTextException;
 import br.com.bearflow.bear_converter.users.application.UserNotFoundException;
@@ -41,5 +43,17 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException exception) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 			.body(ErrorResponse.of(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException exception) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+			.body(ErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidRefreshTokenException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidRefreshToken(InvalidRefreshTokenException exception) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+			.body(ErrorResponse.of(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
 	}
 }
