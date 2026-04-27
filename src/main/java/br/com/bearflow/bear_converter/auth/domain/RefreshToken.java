@@ -9,8 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
@@ -36,12 +34,6 @@ public class RefreshToken {
 	@Column(nullable = false)
 	private boolean revoked;
 
-	@Column(name = "created_at", nullable = false)
-	private Instant createdAt;
-
-	@Column(name = "updated_at", nullable = false)
-	private Instant updatedAt;
-
 	protected RefreshToken() {
 	}
 
@@ -54,18 +46,6 @@ public class RefreshToken {
 
 	public static RefreshToken create(String token, User user, Instant expiresAt) {
 		return new RefreshToken(token, user, expiresAt);
-	}
-
-	@PrePersist
-	void prePersist() {
-		Instant now = Instant.now();
-		this.createdAt = now;
-		this.updatedAt = now;
-	}
-
-	@PreUpdate
-	void preUpdate() {
-		this.updatedAt = Instant.now();
 	}
 
 	public boolean isActive(Instant now) {
