@@ -138,3 +138,23 @@ Motivo:
 - refresh token pode ser rotacionado a cada uso;
 - tokens expirados podem ser revogados por rotina agendada;
 - prepara a base para login com Google no futuro.
+
+## 2026-04-27 - Usar PDFBox para leitura inicial de PDFs
+
+Decisao:
+
+> A leitura inicial dos PDFs da V1 deve usar Apache PDFBox 3.0.7.
+
+Motivo:
+
+- biblioteca Java madura para leitura e inspecao de PDF;
+- encaixa bem no backend Spring Boot;
+- permite detectar texto, imagens e comandos graficos vetoriais;
+- ajuda a separar PDFs vetoriais de PDFs baseados em imagem;
+- cria base para alimentar o modelo intermediario antes da escrita DXF.
+
+Referencia unica para uso nesta decisao:
+
+```text
+https://javadoc.io/doc/org.apache.pdfbox/pdfbox/3.0.7/index.html
+```
