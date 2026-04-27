@@ -148,7 +148,22 @@ Requisitos:
 
 - Java 21;
 - Maven Wrapper incluido no projeto;
-- PostgreSQL configurado para as proximas etapas de desenvolvimento.
+- PostgreSQL configurado.
+
+Variaveis de ambiente para o banco local:
+
+```bash
+export DATABASENAME="bear"
+export DATABASEUSERNAME="dled"
+export DATABASEPASSWORD="sua_senha"
+```
+
+Opcionalmente, tambem e possivel alterar host e porta:
+
+```bash
+export DATABASEHOST="localhost"
+export DATABASEPORT="5432"
+```
 
 Executar a aplicacao:
 
