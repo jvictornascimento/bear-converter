@@ -28,6 +28,7 @@ Funcionalidades planejadas para a V1:
 - logout com revogacao de refresh token;
 - controle de acesso com Spring Security;
 - upload de arquivos PDF;
+- deteccao inicial de PDF vetorial ou PDF baseado em imagem;
 - criacao de jobs de conversao;
 - conversao inicial de PDF CAD vetorial para DXF sem calibracao de escala;
 - historico de conversoes por usuario;
@@ -207,8 +208,14 @@ Autenticacao:
 - `POST /api/v1/auth/refresh` troca um refresh token valido por novos tokens;
 - `POST /api/v1/auth/logout` revoga o refresh token informado.
 
+Conversoes:
+
+- `POST /api/v1/conversions/pdf` recebe um PDF via multipart `file`;
+- PDFs vetoriais sao aceitos para o fluxo de conversao;
+- PDFs baseados em imagem retornam mensagem informando que esse modelo ainda nao esta disponivel.
+
 ## Status
 
 Projeto em fase inicial de desenvolvimento.
 
-No momento, o cadastro de usuarios, a autenticacao JWT com RS256, o refresh token e o logout ja estao implementados no backend.
+No momento, o cadastro de usuarios, a autenticacao JWT com RS256, o refresh token, o logout e o upload inicial de PDF com deteccao vetorial ja estao implementados no backend.
