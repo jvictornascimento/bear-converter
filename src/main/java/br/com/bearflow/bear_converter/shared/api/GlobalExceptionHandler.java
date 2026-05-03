@@ -10,6 +10,7 @@ import br.com.bearflow.bear_converter.users.application.UnsafeTextException;
 import br.com.bearflow.bear_converter.users.application.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -64,6 +65,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleInvalidPdfUpload(InvalidPdfUploadException exception) {
 		return ResponseEntity.badRequest()
 			.body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException exception) {
+		return ResponseEntity.badRequest()
+			.body(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "PDF file exceeds the maximum size of 10MB"));
 	}
 
 	@ExceptionHandler(ImagePdfNotSupportedException.class)

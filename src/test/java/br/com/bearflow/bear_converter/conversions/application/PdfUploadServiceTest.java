@@ -6,6 +6,8 @@ import br.com.bearflow.bear_converter.conversions.support.PdfTestFiles;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -53,8 +55,51 @@ class PdfUploadServiceTest {
 	}
 
 	@Test
-	void shouldRejectInvalidPdfContent() {
+	void shouldRejectPdfWithInvalidContentType() throws Exception {
+		var file = new MockMultipartFile("file", "drawing.pdf", "text/plain", PdfTestFiles.vectorPdf());
+
+		assertThatThrownBy(() -> pdfUploadService.upload(file))
+			.isInstanceOf(InvalidPdfUploadException.class)
+			.hasMessage("Only PDF content type is accepted");
+	}
+
+	@Test
+	void shouldRejectPdfWithoutPdfSignature() {
 		var file = new MockMultipartFile("file", "drawing.pdf", "application/pdf", "not a pdf".getBytes());
+
+		assertThatThrownBy(() -> pdfUploadService.upload(file))
+			.isInstanceOf(InvalidPdfUploadException.class)
+			.hasMessage("Invalid PDF signature");
+	}
+
+	@Test
+	void shouldRejectUnsafePdfFileName() throws Exception {
+		var file = new MockMultipartFile("file", "../drawing.pdf", "application/pdf", PdfTestFiles.vectorPdf());
+
+		assertThatThrownBy(() -> pdfUploadService.upload(file))
+			.isInstanceOf(InvalidPdfUploadException.class)
+			.hasMessage("Invalid PDF file name");
+	}
+
+	@Test
+	void shouldRejectPdfAboveSizeLimit() {
+		byte[] content = new byte[(10 * 1024 * 1024) + 1];
+		Arrays.fill(content, (byte) '0');
+		content[0] = '%';
+		content[1] = 'P';
+		content[2] = 'D';
+		content[3] = 'F';
+		content[4] = '-';
+		var file = new MockMultipartFile("file", "large.pdf", "application/pdf", content);
+
+		assertThatThrownBy(() -> pdfUploadService.upload(file))
+			.isInstanceOf(InvalidPdfUploadException.class)
+			.hasMessage("PDF file exceeds the maximum size of 10MB");
+	}
+
+	@Test
+	void shouldRejectInvalidPdfContent() {
+		var file = new MockMultipartFile("file", "drawing.pdf", "application/pdf", "%PDF-not-valid".getBytes());
 
 		assertThatThrownBy(() -> pdfUploadService.upload(file))
 			.isInstanceOf(InvalidPdfUploadException.class)

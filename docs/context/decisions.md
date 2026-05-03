@@ -158,3 +158,18 @@ Referencia unica para uso nesta decisao:
 ```text
 https://javadoc.io/doc/org.apache.pdfbox/pdfbox/3.0.7/index.html
 ```
+
+## 2026-05-03 - Validar upload de PDF antes do parser
+
+Decisao:
+
+> O upload de PDF deve ser validado antes de chamar o PDFBox.
+
+Motivo:
+
+- reduz superficie de ataque no endpoint de upload;
+- evita chamar o parser com arquivos claramente invalidos;
+- limita consumo de memoria com tamanho maximo de 10MB;
+- bloqueia nomes de arquivo com path traversal;
+- valida extensao, Content-Type e assinatura `%PDF-`;
+- retorna erros controlados para payloads invalidos.

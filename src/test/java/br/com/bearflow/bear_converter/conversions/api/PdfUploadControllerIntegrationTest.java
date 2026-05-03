@@ -82,4 +82,19 @@ class PdfUploadControllerIntegrationTest {
 			.andExpect(status().isUnprocessableContent())
 			.andExpect(jsonPath("$.message").value("PDF complexity is not available for the free plan yet"));
 	}
+
+	@Test
+	@WithMockUser
+	void shouldRejectPdfWithInvalidSignature() throws Exception {
+		MockMultipartFile file = new MockMultipartFile(
+			"file",
+			"fake.pdf",
+			"application/pdf",
+			"not a pdf".getBytes()
+		);
+
+		mockMvc.perform(multipart("/api/v1/conversions/pdf").file(file))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Invalid PDF signature"));
+	}
 }

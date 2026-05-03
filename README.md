@@ -211,6 +211,8 @@ Autenticacao:
 Conversoes:
 
 - `POST /api/v1/conversions/pdf` recebe um PDF via multipart `file`;
+- o upload aceita somente arquivos `.pdf` com Content-Type de PDF e assinatura `%PDF-`;
+- o tamanho maximo padrao do PDF e 10MB;
 - PDFs vetoriais sao aceitos para o fluxo de conversao;
 - PDFs baseados em imagem retornam mensagem informando que esse modelo ainda nao esta disponivel;
 - PDFs vetoriais sao classificados como `SIMPLE`, `MEDIUM`, `COMPLEX` ou `PROFESSIONAL`;
